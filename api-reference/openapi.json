@@ -1,249 +1,1600 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store edit",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "DataBank API",
+    "version": "1.0.0",
+    "description": "API organized by main scopes"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.databank.com",
+      "description": "Production"
+    },
+    {
+      "url": "https://api-stage.databank.com",
+      "description": "Staging"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "noauthAuth": {
+        "type": "http",
+        "scheme": "noauth"
+      }
+    }
+  },
   "security": [
     {
       "bearerAuth": []
     }
   ],
+  "tags": [
+    {
+      "name": "Assets",
+      "description": "Operations related to assets"
+    },
+    {
+      "name": "Organizations",
+      "description": "Operations related to organizations"
+    },
+    {
+      "name": "Tickets",
+      "description": "Operations related to tickets"
+    },
+    {
+      "name": "Users",
+      "description": "Operations related to users"
+    },
+    {
+      "name": "Portal",
+      "description": "Customer portal operations"
+    },
+    {
+      "name": "Orders",
+      "description": "Operations related to orders"
+    },
+    {
+      "name": "Networking",
+      "description": "Network operations (subnets, IPs, VLANs)"
+    },
+    {
+      "name": "Locations",
+      "description": "Operations related to locations"
+    },
+    {
+      "name": "Attachments",
+      "description": "Attachment management"
+    },
+    {
+      "name": "Attributes",
+      "description": "Attribute and value management"
+    },
+    {
+      "name": "Custom Fields",
+      "description": "Custom fields"
+    },
+    {
+      "name": "Contracts",
+      "description": "Contracts"
+    },
+    {
+      "name": "Items",
+      "description": "Items/Products"
+    },
+    {
+      "name": "Quotes",
+      "description": "Quotes"
+    }
+  ],
   "paths": {
-    "/plants": {
+    "/v1/assets": {
+      "post": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Create new asset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "organization": "{{organization.uuid}}",
+                  "location": "{{location.uuid}}",
+                  "item": "{{item.uuid}}",
+                  "status": "{{product_status}}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Asset created successfully"
+          }
+        }
+      },
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "tags": [
+          "Assets"
+        ],
+        "summary": "List assets",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "integer"
+            },
+            "example": 200
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of assets"
+          }
+        }
+      }
+    },
+    "/v1/assets/{asset_id}": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "View asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+            "description": "Asset details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Update asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Asset updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Delete asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset deleted"
+          }
+        }
+      }
+    },
+    "/v1/assets/{asset_id}/attributes": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "List asset attributes",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of attributes"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Add attribute to asset",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "attribute": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
         },
         "responses": {
           "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "description": "Attribute added"
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/plants/{id}/custom": {
+    "/v1/assets/{asset_id}/networking/subnets": {
       "get": {
-        "description": "Returns custom data",
+        "tags": [
+          "Assets"
+        ],
+        "summary": "List asset subnets",
         "parameters": [
           {
-            "name": "id",
+            "name": "asset_id",
             "in": "path",
-            "description": "ID of plant",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Something...",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "description": "List of subnets"
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/v1/organizations": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "List organizations",
+        "responses": {
+          "200": {
+            "description": "List of organizations"
+          }
+        }
+      },
       "post": {
-        "description": "Information about a new plant added to the store",
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Create organization",
         "requestBody": {
-          "description": "Plant added to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+            "description": "Organization created"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/v1/organizations/{organization_id}": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "View organization",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Update organization",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Organization updated"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organization_id}/contacts": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "List organization contacts",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of contacts"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "Add contact",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contact added"
+          }
+        }
+      }
+    },
+    "/v1/organizations/{organization_id}/assets": {
+      "get": {
+        "tags": [
+          "Organizations"
+        ],
+        "summary": "List organization assets",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of assets"
+          }
+        }
+      }
+    },
+    "/v1/tickets": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "List tickets",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of tickets"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Create ticket",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string"
+                  },
+                  "organization": {
+                    "type": "object",
+                    "properties": {
+                      "uuid": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket created"
+          }
+        }
+      }
+    },
+    "/v1/tickets/{ticket_id}": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "View ticket",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Update ticket",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket updated"
+          }
+        }
+      }
+    },
+    "/v1/tickets/{ticket_id}/events": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "List ticket events",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of events"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Add event to ticket",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event added"
+          }
+        }
+      }
+    },
+    "/v1/tickets/{ticket_id}/close": {
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Close ticket",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ticket closed"
+          }
+        }
+      }
+    },
+    "/v1/tickets/search": {
+      "get": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Search tickets (GET)",
+        "parameters": [
+          {
+            "name": "summary",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "summary": "Search tickets (POST)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/v1/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List users",
+        "responses": {
+          "200": {
+            "description": "List of users"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created"
+          }
+        }
+      }
+    },
+    "/v1/users/{user_id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "View user",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated"
+          }
+        }
+      }
+    },
+    "/v1/users/{user_id}/organizations": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List user organizations",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of organizations"
+          }
+        }
+      }
+    },
+    "/v1/portal/user/authorize": {
+      "post": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "Authorize portal user",
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "x-auth-username",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User authorized"
+          }
+        }
+      }
+    },
+    "/v1/portal/loa-cfa": {
+      "post": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "Upload LOA-CFA file",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "organization": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "Search location (AI)",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Location found"
+          }
+        }
+      }
+    },
+    "/v1/orders": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "List orders",
+        "responses": {
+          "200": {
+            "description": "List of orders"
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "View order",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Update order",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order updated"
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_id}/attachments": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "List order attachments",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of attachments"
+          }
+        }
+      }
+    },
+    "/v1/networking/subnets": {
+      "get": {
+        "tags": [
+          "Networking"
+        ],
+        "summary": "List subnets",
+        "responses": {
+          "200": {
+            "description": "List of subnets"
+          }
+        }
+      }
+    },
+    "/v1/networking/subnets/{id}": {
+      "get": {
+        "tags": [
+          "Networking"
+        ],
+        "summary": "View subnet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subnet details"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Networking"
+        ],
+        "summary": "Delete subnet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subnet deleted"
+          }
+        }
+      }
+    },
+    "/v1/networking/ip-addresses": {
+      "get": {
+        "tags": [
+          "Networking"
+        ],
+        "summary": "List IP addresses",
+        "responses": {
+          "200": {
+            "description": "List of IPs"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Networking"
+        ],
+        "summary": "Delete multiple IPs",
+        "responses": {
+          "200": {
+            "description": "IPs deleted"
+          }
+        }
+      }
+    },
+    "/v1/networking/vlans/{id}/subnets": {
+      "get": {
+        "tags": [
+          "Networking"
+        ],
+        "summary": "List VLAN subnets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of subnets"
+          }
+        }
+      }
+    },
+    "/v1/locations": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "List locations",
+        "responses": {
+          "200": {
+            "description": "List of locations"
+          }
+        }
+      }
+    },
+    "/v1/locations/datacenters": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "List datacenters",
+        "responses": {
+          "200": {
+            "description": "List of datacenters"
+          }
+        }
+      }
+    },
+    "/v1/locations/{id}": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "View location",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Location details"
+          }
+        }
+      }
+    },
+    "/v1/locations/{id}/children": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "List child locations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of child locations"
+          }
+        }
+      }
+    },
+    "/v1/attachments": {
+      "post": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Upload attachment",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attachment uploaded"
+          }
+        }
+      }
+    },
+    "/v1/attachments/{attachment_id}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "View attachment",
+        "parameters": [
+          {
+            "name": "attachment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "download",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Update attachment",
+        "parameters": [
+          {
+            "name": "attachment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attachment updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Delete attachment",
+        "parameters": [
+          {
+            "name": "attachment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attachment deleted"
+          }
+        }
+      }
+    },
+    "/v1/attributes": {
+      "get": {
+        "tags": [
+          "Attributes"
+        ],
+        "summary": "List attributes",
+        "responses": {
+          "200": {
+            "description": "List of attributes"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Attributes"
+        ],
+        "summary": "Create attribute",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attribute created"
+          }
+        }
+      }
+    },
+    "/v1/attributes/{id}": {
+      "patch": {
+        "tags": [
+          "Attributes"
+        ],
+        "summary": "Update attribute",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attribute updated"
+          }
+        }
+      }
+    },
+    "/v1/custom-fields": {
+      "get": {
+        "tags": [
+          "Custom Fields"
+        ],
+        "summary": "List custom fields",
+        "parameters": [
+          {
+            "name": "all",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of custom fields"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Custom Fields"
+        ],
+        "summary": "Create custom field",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custom field created"
+          }
+        }
+      }
+    },
+    "/v1/custom-fields/{id}": {
+      "get": {
+        "tags": [
+          "Custom Fields"
+        ],
+        "summary": "View custom field",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Custom field details"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Custom Fields"
+        ],
+        "summary": "Update custom field",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custom field updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Custom Fields"
+        ],
+        "summary": "Delete custom field",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Custom field deleted"
+          }
+        }
+      }
+    },
+    "/v1/contracts": {
+      "get": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "List contracts",
+        "responses": {
+          "200": {
+            "description": "List of contracts"
+          }
+        }
+      }
+    },
+    "/v1/contracts/{id}": {
+      "get": {
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "View contract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Contract details"
+          }
+        }
+      }
+    },
+    "/v1/items": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "List items",
+        "responses": {
+          "200": {
+            "description": "List of items"
+          }
+        }
+      }
+    },
+    "/v1/items/{item_id}": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "View item",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item details"
+          }
+        }
+      }
+    },
+    "/v1/quotes": {
+      "get": {
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "List quotes",
+        "responses": {
+          "200": {
+            "description": "List of quotes"
+          }
+        }
+      }
+    },
+    "/v1/quotes/{id}": {
+      "get": {
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "View quote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote details"
+          }
+        }
       }
     }
   }
